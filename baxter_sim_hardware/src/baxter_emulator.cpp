@@ -214,7 +214,7 @@ bool baxter_emulator::init() {
   torso_rightOL_nav_light.state = baxter_core_msgs::DigitalIOState::OFF;
 
   head_msg.pan = 0;
-  head_msg.isTurning = false;
+  head_msg.isPanning = false;
   head_msg.isNodding = false;
 
   isStopped = false;
@@ -318,7 +318,7 @@ void baxter_emulator::publish(const std::string &img_path) {
   // Read OpenCV Mat image and convert it to ROS message
   cv_bridge::CvImagePtr cv_ptr(new cv_bridge::CvImage);
   try {
-    cv_ptr->image = cv::imread(img_path, CV_LOAD_IMAGE_UNCHANGED);
+    cv_ptr->image = cv::imread(img_path, cv::IMREAD_UNCHANGED);
     if (cv_ptr->image.data) {
       cv_ptr->encoding = sensor_msgs::image_encodings::BGR8;
       sleep(IMG_LOAD_ON_STARTUP_DELAY);  // Wait for the model to load
@@ -511,9 +511,9 @@ right_gravity.actual_effort.resize(left_gravity.name.size());
   for (int i = 0; i < msg.name.size(); i++) {
     if (msg.name[i] == "head_pan") {
       if (fabs(float(head_msg.pan) - float(msg.position[i])) > threshold)
-        head_msg.isTurning = true;
+        head_msg.isPanning = true;
       else
-        head_msg.isTurning = false;
+        head_msg.isPanning = false;
       head_msg.pan = msg.position[i];
     }
     else if (msg.name[i] == "l_gripper_l_finger_joint") {
